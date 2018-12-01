@@ -1,3 +1,6 @@
+import { calculate } from './calculate';
+import * as addModule from './add';
+
 describe('basic jest examples', () => {
   it('determines whether two values are the same value', () => {
     expect('bratislava').toBe('bratislava');
@@ -26,9 +29,14 @@ Array [
     expect(fail).toThrow();
   });
 
+  function fail() {
+    throw new Error('Nasty error');
+  }
+
   it('in not fails', () => {
     jest.spyOn(global.console, 'error').mockImplementation(() => {});
     expect(notFail).not.toThrow();
+    jest.restoreAllMocks();
   });
 
   it('checks truthiness', () => {
@@ -49,14 +57,11 @@ Array [
     expect(x + y).toBe(result);
   });
 
-  function fail() {
-    throw new Error('Nasty error');
-  }
-
   function notFail() {
     try {
       fail();
     } catch (error) {
+      console.error(error);
       console.error(error);
     }
   }
@@ -98,3 +103,17 @@ function fetchDataPromise() {
     }, 1);
   });
 }
+
+//medium.com/@rickhanlonii/understanding-jest-mocks-f0046c68e53c
+
+describe('mocking external module', () => {
+  it('calculate', () => {
+    const addMock = jest.spyOn(addModule, 'add');
+    addMock.mockReturnValue(4);
+    // addMock.mockReturnValueOnce(4);
+    const result = calculate(1, 1);
+    expect(addMock).toHaveBeenCalledWith(1, 1);
+    expect(result).toBe(4);
+    addMock.mockRestore();
+  });
+});
