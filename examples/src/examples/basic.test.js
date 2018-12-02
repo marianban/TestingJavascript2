@@ -16,27 +16,12 @@ Array [
   "kosice",
 ]
 `);
-    expect(towns).toContain('bratislava');
   });
 
   it('determines whether value is valid email address', () => {
     expect('test@email.com').toMatch(
       /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
     );
-  });
-
-  it('fails', () => {
-    expect(fail).toThrow();
-  });
-
-  function fail() {
-    throw new Error('Nasty error');
-  }
-
-  it('in not fails', () => {
-    jest.spyOn(global.console, 'error').mockImplementation(() => {});
-    expect(notFail).not.toThrow();
-    jest.restoreAllMocks();
   });
 
   it('checks truthiness', () => {
@@ -48,6 +33,34 @@ Array [
     expect(n).toBeFalsy();
   });
 
+  it('fails', () => {
+    expect(fail).toThrow();
+  });
+
+  function fail() {
+    throw new Error('Nasty error');
+  }
+
+  it.skip('not fails', () => {
+    expect(notFail).not.toThrow();
+  });
+
+  it('not fails and shallows error', () => {
+    const errorMock = jest
+      .spyOn(global.console, 'error')
+      .mockImplementationOnce(() => {});
+    expect(notFail).not.toThrow();
+    expect(errorMock).toBeCalledTimes(1);
+  });
+
+  function notFail() {
+    try {
+      fail();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   test.each`
     x     | y    | result
     ${0}  | ${1} | ${1}
@@ -56,19 +69,9 @@ Array [
   `('$x + $y = $result', ({ x, y, result }) => {
     expect(x + y).toBe(result);
   });
-
-  function notFail() {
-    try {
-      fail();
-    } catch (error) {
-      console.error(error);
-      console.error(error);
-    }
-  }
 });
 
 describe('testing async', () => {
-  // Don't do this!
   it('is slivkovy lekvar', done => {
     function callback(data) {
       expect(data).toBe('slivkovy lekvar');
@@ -78,11 +81,25 @@ describe('testing async', () => {
     fetchData(callback);
   }, 10); // tiemout (default is 5000)
 
+  function fetchData(callback) {
+    setTimeout(() => {
+      callback('slivkovy lekvar');
+    }, 1);
+  }
+
   it('is more slivkovy lekvar', () => {
     return fetchDataPromise().then(data => {
       expect(data).toBe('slivkovy lekvar');
     });
   });
+
+  function fetchDataPromise() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve('slivkovy lekvar');
+      }, 1);
+    });
+  }
 
   it('is much more slivkovy lekvar', async () => {
     const data = await fetchDataPromise();
@@ -90,30 +107,14 @@ describe('testing async', () => {
   });
 });
 
-function fetchData(callback) {
-  setTimeout(() => {
-    callback('slivkovy lekvar');
-  }, 1);
-}
-
-function fetchDataPromise() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve('slivkovy lekvar');
-    }, 1);
-  });
-}
-
 //medium.com/@rickhanlonii/understanding-jest-mocks-f0046c68e53c
 
 describe('mocking external module', () => {
   it('calculate', () => {
     const addMock = jest.spyOn(addModule, 'add');
-    addMock.mockReturnValue(4);
-    // addMock.mockReturnValueOnce(4);
+    addMock.mockReturnValueOnce(4);
     const result = calculate(1, 1);
     expect(addMock).toHaveBeenCalledWith(1, 1);
     expect(result).toBe(4);
-    addMock.mockRestore();
   });
 });

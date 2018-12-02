@@ -15,15 +15,6 @@ test('plain react test', () => {
   const counter = container.querySelector('span');
   expect(counter.textContent).toBe('0');
   const inc = container.querySelector("button[data-testid='inc']");
-});
-
-test.skip('plain react test', () => {
-  var body = document.body;
-  const container = body.appendChild(document.createElement('div'));
-  ReactDOM.render(<Counter />, container);
-  const counter = container.querySelector('span');
-  expect(counter.textContent).toBe('0');
-  const inc = container.querySelector("button[data-testid='inc']");
   Simulate.click(inc);
   expect(counter.textContent).toBe('1');
   ReactDOM.unmountComponentAtNode(container);
@@ -37,12 +28,12 @@ const renderWithProvider = ui => {
 
 test('body is empty', () => {
   var body = document.body;
-  // expect(body.innerHTML).toBe('');
+  expect(body.innerHTML).toBe('');
 });
 
 // npm install --save-dev jest-dom
 // npm install --save-dev react-testing-library
-test.skip('react-testing-library', () => {
+test('react-testing-library', () => {
   const { getByTestId } = render(<Counter />);
   const counter = getByTestId('value');
   const inc = getByTestId('inc');
@@ -51,7 +42,7 @@ test.skip('react-testing-library', () => {
   expect(counter).toHaveTextContent('1');
 });
 
-test.skip('react-testing-library redux test', () => {
+test('react-testing-library redux test', () => {
   const { getByTestId } = renderWithProvider(<CounterRedux />);
   const counter = getByTestId('value');
   const inc = getByTestId('inc');
