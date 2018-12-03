@@ -22,4 +22,6 @@ describe('backend integration tests', () => {
       .get('/async')
       .expect(200, 'Hello from the outside');
   });
+
+  // DB?
 });

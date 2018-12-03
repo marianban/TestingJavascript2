@@ -9,13 +9,6 @@ describe('basic jest examples', () => {
   it('determines whether two objects/arrays are same', () => {
     const towns = ['kosice', 'bratislava', 'bystrica'].sort();
     expect(towns).toEqual(['bratislava', 'bystrica', 'kosice']);
-    expect(towns).toMatchInlineSnapshot(`
-Array [
-  "bratislava",
-  "bystrica",
-  "kosice",
-]
-`);
   });
 
   it('determines whether value is valid email address', () => {
@@ -48,15 +41,17 @@ Array [
   it('not fails and shallows error', () => {
     const errorMock = jest
       .spyOn(global.console, 'error')
-      .mockImplementationOnce(() => {});
+      .mockImplementation(() => {});
     expect(notFail).not.toThrow();
-    expect(errorMock).toBeCalledTimes(1);
+    expect(errorMock).toBeCalledTimes(2);
+    jest.restoreAllMocks();
   });
 
   function notFail() {
     try {
       fail();
     } catch (error) {
+      console.error(error);
       console.error(error);
     }
   }
@@ -114,7 +109,7 @@ describe('mocking external module', () => {
     const addMock = jest.spyOn(addModule, 'add');
     addMock.mockReturnValueOnce(4);
     const result = calculate(1, 1);
-    expect(addMock).toHaveBeenCalledWith(1, 1);
     expect(result).toBe(4);
+    expect(addMock).toHaveBeenCalledWith(1, 1);
   });
 });

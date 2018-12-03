@@ -21,11 +21,6 @@ test('plain react test', () => {
   body.removeChild(container);
 });
 
-const renderWithProvider = ui => {
-  const store = createStore(rootReducer);
-  return render(<Provider store={store}>{ui}</Provider>);
-};
-
 test('body is empty', () => {
   var body = document.body;
   expect(body.innerHTML).toBe('');
@@ -41,6 +36,11 @@ test('react-testing-library', () => {
   fireEvent.click(inc);
   expect(counter).toHaveTextContent('1');
 });
+
+const renderWithProvider = ui => {
+  const store = createStore(rootReducer);
+  return render(<Provider store={store}>{ui}</Provider>);
+};
 
 test('react-testing-library redux test', () => {
   const { getByTestId } = renderWithProvider(<CounterRedux />);
