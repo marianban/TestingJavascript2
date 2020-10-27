@@ -113,3 +113,22 @@ describe('mocking external module', () => {
     expect(addMock).toHaveBeenCalledWith(1, 1);
   });
 });
+
+// spyon doesn't work for reexported functions index.js (https://stackoverflow.com/questions/53162001/typeerror-during-jests-spyon-cannot-set-property-getrequest-of-object-which)
+// in that case we can mock the whole module with  
+// as a second argument we can provide the mocked module
+// test.mock('./add', { add: jest.fn() });
+// also note that the add module is mocked only for this test file https://stackoverflow.com/questions/56496998/how-to-restore-a-mock-created-with-jest-mock
+// and it is also hoisted by babel and moved before all imports at the top of the file
+jest.mock('./add');
+
+describe('mocking external module 2', () => {
+  it('calculate', () => {
+    const addMock = jest.spyOn(addModule, 'add');
+    addMock.mockReturnValueOnce(4);
+    const result = calculate(1, 1);
+    expect(result).toBe(4);
+    expect(addMock).toHaveBeenCalledWith(1, 1);
+  });
+});
+
