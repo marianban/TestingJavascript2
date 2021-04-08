@@ -120,15 +120,14 @@ describe('mocking external module', () => {
 // test.mock('./add', { add: jest.fn() });
 // also note that the add module is mocked only for this test file https://stackoverflow.com/questions/56496998/how-to-restore-a-mock-created-with-jest-mock
 // and it is also hoisted by babel and moved before all imports at the top of the file
-jest.mock('./add');
+jest.mock('./add', {
+  add: () => 5
+});
 
 describe('mocking external module 2', () => {
-  it('calculate', () => {
-    const addMock = jest.spyOn(addModule, 'add');
-    addMock.mockReturnValueOnce(4);
+  it('calculate', () => {   
     const result = calculate(1, 1);
     expect(result).toBe(4);
-    expect(addMock).toHaveBeenCalledWith(1, 1);
   });
 });
 
